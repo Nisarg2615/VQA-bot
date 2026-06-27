@@ -1,6 +1,7 @@
 # 🔍 VQA Bot — Visual Question Answering
 
-Ask questions about any image using Groq's free vision API + Streamlit.
+Ask questions about any image using **Google Gemini's free vision API** + **Streamlit**.  
+Explain diagrams, troubleshoot photos, analyze charts — all in a clean dark-themed chat UI.
 
 ---
 
@@ -11,40 +12,75 @@ Ask questions about any image using Groq's free vision API + Streamlit.
 pip install -r requirements.txt
 ```
 
-### 2. Get your free Groq API key
-Go to → https://console.groq.com  
-Sign up → API Keys → Create Key  
-Copy the key (starts with `gsk_...`)
+### 2. Get your free Gemini API key
+- Go to → https://aistudio.google.com
+- Sign in with your Google account
+- Click **Get API key** → **Create API key**
+- Copy the key (starts with `AIza...`)
 
-### 3. Run the app
+### 3. Paste the key in `app.py`
+Open `app.py` and find line 11:
+```python
+GEMINI_API_KEY = "your_gemini_api_key_here"   # ← paste your key here
+```
+Replace `your_gemini_api_key_here` with your actual key.
+
+### 4. Run the app
 ```bash
 streamlit run app.py
 ```
-
-The app opens at `http://localhost:8501`  
-Paste your Groq API key in the sidebar → upload an image → ask away!
+Opens at `http://localhost:8501` — upload an image and start asking!
 
 ---
 
-## 🧠 Models Used
+## 🧠 Models
 
-| Model | Speed | Best for |
+| Model | Speed | Best For |
 |---|---|---|
-| `llama-4-scout-17b` | ⚡ Very fast | Diagrams, quick analysis |
-| `llama-4-maverick-17b` | 🎯 More capable | Complex troubleshooting |
+| `gemini-2.5-flash` | ⚡ Fast | Complex diagrams, detailed analysis |
+| `gemini-2.5-flash-lite-preview-06-17` | 🚀 Faster | Quick questions, lighter tasks |
 
-Both are **free** on Groq's free tier.
+Switch between them anytime from the sidebar — no restart needed.
 
 ---
 
-## 💡 What can it do?
+## 💡 What Can It Do?
 
 - Explain circuit diagrams and schematics
-- Troubleshoot issues from photos (hardware, software errors, etc.)
-- Describe charts, graphs, and infographics
+- Troubleshoot hardware/software issues from photos
+- Read and interpret charts, graphs, and infographics
 - Identify problems in engineering drawings
-- Read and explain screenshots with errors
-- Answer follow-up questions about the same image (multi-turn chat)
+- Analyze screenshots with errors or warnings
+- Multi-turn chat — ask follow-up questions about the same image
+
+---
+
+## 🖥️ App Layout
+
+```
+┌─────────────────┬──────────────────────────┐
+│   Sidebar       │   Left Panel             │
+│                 │   • Image upload         │
+│  • Model select │   • Image preview        │
+│  • System prompt│   • Quick question       │
+│  • Session stats│     buttons              │
+│  • Clear chat   ├──────────────────────────┤
+│                 │   Right Panel            │
+│                 │   • Chat history         │
+│                 │   • Question input       │
+│                 │   • Analyze button       │
+└─────────────────┴──────────────────────────┘
+```
+
+---
+
+## ⚙️ How the System Prompt Works
+
+The system prompt is passed to Gemini on **every API call** via a dedicated `system_instruction` field — separate from the chat messages. This means:
+
+- It applies to every single response automatically
+- You can edit it mid-conversation and it takes effect immediately on the next message
+- The full conversation history is also re-sent each call (Gemini is stateless)
 
 ---
 
@@ -52,25 +88,24 @@ Both are **free** on Groq's free tier.
 
 ```
 vqa-bot/
-├── app.py            ← Main Streamlit app
+├── app.py            ← Main Streamlit app (all-in-one)
 ├── requirements.txt  ← Python dependencies
 └── README.md         ← This file
 ```
 
 ---
 
-## 🔧 Customization
+## 🆓 Free Tier Limits (Gemini)
 
-- **System prompt**: Edit directly in the sidebar to change bot behavior
-- **Model**: Switch between Scout (fast) and Maverick (accurate) in the sidebar
-- **Style**: Dark theme by default, all CSS is in the `<style>` block at the top of `app.py`
+Gemini's free tier via AI Studio is generous and **never expires**:
+
+| Model | Free RPM | Free TPM |
+|---|---|---|
+| Gemini 2.5 Flash | 10 | 250,000 |
+| Gemini 2.5 Flash Lite | 30 | 1,000,000 |
+
+If you hit rate limits, wait ~30 seconds and retry.  
+No credit card required.
 
 ---
 
-## 🆓 Free Tier Limits (Groq)
-
-Groq's free tier is generous for personal/demo use:
-- ~14,400 tokens/minute for LLaMA 4 models
-- No credit card required
-
-If you hit rate limits, wait ~30 seconds and retry.
